@@ -1,19 +1,32 @@
 # Developer Portfolio Bootstrap
 
-This repository is bootstrapped as a public-safe source pack for Toan's personal website.
+This repository is the public-safe source pack for Toan's personal website.
 
-It does not contain the Astro site yet. The initial commit only establishes:
+Current state:
 
-- repository instructions;
-- a provenance manifest;
-- curated public-safe content extracted from Marketing OS;
-- project summaries that can later drive the website implementation.
+- initialized for later Symphony implementation;
+- approved editorial inputs are staged under `content-source/approved/`;
+- the Astro application has not been scaffolded yet.
+
+Expected stack:
+
+- Astro
+- TypeScript
+- Astro Content Collections
+- Markdown and MDX
+- minimal client-side JavaScript unless a later approved issue changes the stack
+
+Next operational step:
+
+1. create the GitHub implementation issue;
+2. add the `symphony-ready` label;
+3. let Symphony implement the site on an issue branch and open a draft pull request.
 
 ## Source Of Truth
 
 The approved source material lives under `content-source/approved/`.
 
-The Marketing OS repository remains read-only and is not modified by this bootstrap.
+Future website copy must use those files without inventing facts or importing private Marketing OS material.
 
 ## Repository Layout
 
@@ -43,7 +56,6 @@ content-source/
 
 ## How To Use
 
-Future implementation work should read the manifest first, then pull from the approved source files only.
+Read `content-source/README.md` and `content-source/MANIFEST.md` before writing website copy.
 
-Do not copy private Marketing OS material, secrets, unverified claims, or unsupported product metrics into the website.
-
+Do not publish the source pack blindly. Treat it as editorial input that still needs implementation and review.

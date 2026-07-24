@@ -11,7 +11,7 @@ This directory contains the curated public-safe inputs for the future personal w
 ## How It Is Organized
 
 - `MANIFEST.md` records the source map and destination intent.
-- `approved/` contains the content that can be used later for the website.
+- `approved/` contains the editorial inputs that Symphony can read later.
 - `approved/projects/` contains project-specific summaries and safe angles.
 
 ## Usage Rules
@@ -20,4 +20,5 @@ This directory contains the curated public-safe inputs for the future personal w
 - Keep the wording tied to the source record.
 - If a source mixes approved and private material, use only a curated public extract.
 - If a claim is not in the proof register, treat it as a hypothesis until additional evidence exists.
-
+- Future Astro content collections will likely live elsewhere, probably under `src/content/`.
+- Preserve provenance whenever source material changes.
