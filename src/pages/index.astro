@@ -1,0 +1,236 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProofGrid from '../components/ProofGrid.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Timeline from '../components/Timeline.astro';
+import StatusPanel from '../components/StatusPanel.astro';
+import {
+  buildAreas,
+  currentStatus,
+  experience,
+  proofs,
+} from '../lib/site-content';
+import { site } from '../lib/site';
+
+const workEntries = await getCollection('work');
+const primaryWork = workEntries
+  .filter((entry) => entry.data.category === 'primary')
+  .sort((left, right) => left.data.priority - right.data.priority);
+const secondaryWork = workEntries
+  .filter((entry) => entry.data.category === 'secondary')
+  .sort((left, right) => left.data.priority - right.data.priority);
+
+const notes = await getCollection('notes');
+const pageTitle = 'Senior Product Engineer building production software';
+const pageDescription = site.description;
+const canonical = new URL('/', Astro.site ?? site.siteUrl).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: 'Senior Product Engineer',
+  url: canonical,
+  sameAs: [site.github],
+  knowsAbout: [
+    'Product architecture',
+    'Production AI systems',
+    'Search and data',
+    'Software-enabled hardware',
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonical}
+  jsonLd={schema}
+>
+  <SiteHeader slot="header" />
+
+  <section
+    class="section hero"
+    aria-labelledby="hero-title"
+    data-tone="alt"
+    style={`--delay: 0`}
+  >
+    <p class="section-label">//SECTION_01</p>
+    <div class="stack">
+      <p class="kicker">Senior Product Engineer | Technical Lead</p>
+      <h1 id="hero-title">
+        Senior Product Engineer building production software, AI workflow
+        systems, and software-enabled hardware products.
+      </h1>
+      <p>
+        I build systems that turn ambiguous requirements into production
+        software, with architecture, search, data, and operations designed in
+        from the start.
+      </p>
+      <p class="hero-prompt" aria-label="Terminal style prompt">
+        <span>&gt; ready_for_review</span><span class="cursor">_</span>
+      </p>
+    </div>
+    <div class="button-row">
+      <a class="button" href="/work">View Work</a>
+      <a class="button secondary" href="/cv">View CV</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="proof-title">
+    <SectionHeading
+      label="//SECTION_02"
+      title="Verified Proof"
+      eyebrow="Approved claims only, kept within their project or role scope."
+      id="proof-title"
+    />
+    <ProofGrid proofs={[...proofs]} />
+  </section>
+
+  <section class="section" aria-labelledby="build-title" data-tone="alt">
+    <SectionHeading
+      label="//SECTION_03"
+      title="What I Build"
+      eyebrow="Four areas that stay useful for recruiters, founders, and engineering leaders."
+      id="build-title"
+    />
+    <div class="grid" data-columns="2">
+      {
+        buildAreas.map((area) => (
+          <article class="panel">
+            <p class="kicker">{area.label}</p>
+            <h3>{area.title}</h3>
+            <p>{area.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="work-title">
+    <SectionHeading
+      label="//SECTION_04"
+      title="Selected Work"
+      eyebrow="Primary case studies first, then a secondary list of supporting work."
+      id="work-title"
+    />
+    <div class="primary-work">
+      {
+        primaryWork.map((entry) => (
+          <ProjectCard
+            label={entry.data.label}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            problem={entry.data.problem}
+            role={entry.data.role}
+            approach={entry.data.approach}
+            decisions={entry.data.decisions}
+            outcome={entry.data.outcome}
+            status={entry.data.status}
+            href={entry.id === 'finderlab' ? '/work/finderlab' : undefined}
+            linkLabel={
+              entry.id === 'finderlab'
+                ? '[READ_CASE_STUDY]'
+                : '[DETAIL_PAGE_PENDING]'
+            }
+          />
+        ))
+      }
+    </div>
+    <hr class="divider" />
+    <div class="stack">
+      <p class="kicker">Secondary approved work</p>
+      <div class="grid" data-columns="2">
+        {
+          secondaryWork.map((entry) => (
+            <a class="project-row" href="/work">
+              <p class="label">{entry.data.label}</p>
+              <h3>{entry.data.title}</h3>
+              <p>{entry.data.summary}</p>
+            </a>
+          ))
+        }
+      </div>
+      <p class="footnote">
+        Additional approved project context is available on the work index and
+        in the FinderLab case study.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="experience-title" data-tone="alt">
+    <SectionHeading
+      label="//SECTION_05"
+      title="Experience"
+      eyebrow="Concise timeline. The public CV route carries the longer source-backed version."
+      id="experience-title"
+    />
+    <Timeline entries={[...experience]} />
+    <p>
+      <a class="button secondary" href="/cv">Open Public CV</a>
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="notes-title">
+    <SectionHeading
+      label="//SECTION_06"
+      title="Engineering Notes"
+      eyebrow="The collection is ready even when no public notes have been approved yet."
+      id="notes-title"
+    />
+    {
+      notes.length > 0 ? (
+        <div class="grid" data-columns="2">
+          {notes.map((note) => (
+            <article class="panel">
+              <p class="kicker">{note.data.topic}</p>
+              <h3>
+                <a href={`/notes/${note.id}`}>{note.data.title}</a>
+              </h3>
+              <p>{note.data.summary}</p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="note-empty">
+          <p class="kicker">No approved notes yet</p>
+          <p>
+            The Notes collection is implemented and ready for future articles,
+            but no public note was present in the approved source pack.
+          </p>
+        </div>
+      )
+    }
+  </section>
+
+  <section class="section" aria-labelledby="current-title" data-tone="alt">
+    <SectionHeading
+      label="//SECTION_07"
+      title="Currently"
+      eyebrow="Current work, current research direction, and current opportunity status."
+      id="current-title"
+    />
+    <StatusPanel items={[...currentStatus]} />
+  </section>
+
+  <section class="section" aria-labelledby="contact-title">
+    <SectionHeading
+      label="//SECTION_08"
+      title="Contact"
+      eyebrow="Public-safe channels only. No contact backend in V1."
+      id="contact-title"
+    />
+    <div class="contact-grid">
+      <a class="project-row" href="/contact">
+        <p class="label">[CONTACT]</p>
+        <h3>Open the contact page</h3>
+        <p>
+          GitHub is the approved public channel. Email and LinkedIn are listed
+          on the contact page as unpublished in the approved source pack.
+        </p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

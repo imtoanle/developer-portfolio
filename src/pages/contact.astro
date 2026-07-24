@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { contactChannels } from '../lib/site-content';
+import { site as siteMeta } from '../lib/site';
+
+const canonical = new URL('/contact', Astro.site ?? siteMeta.siteUrl).href;
+---
+
+<BaseLayout
+  title="Contact"
+  description="Public contact options for Toan Le, limited to approved source-pack channels."
+  canonical={canonical}
+>
+  <SiteHeader slot="header" />
+
+  <section class="section">
+    <SectionHeading
+      label="//SECTION_08"
+      title="Contact"
+      eyebrow="Only public-safe channels from the approved source pack."
+      id="contact-title"
+    />
+    <div class="contact-grid">
+      {
+        contactChannels.map((channel) => (
+          <article class="contact-card">
+            <h3>{channel.label}</h3>
+            <p>{channel.value}</p>
+            {channel.href ? (
+              <a href={channel.href} rel="noreferrer">
+                {channel.value}
+              </a>
+            ) : null}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,63 @@
+---
+import { site } from '../lib/site';
+import '../styles/global.css';
+
+type Props = {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+};
+
+const {
+  title = site.title,
+  description = site.description,
+  canonical = new URL(Astro.url.pathname, Astro.site ?? site.siteUrl).href,
+  image = new URL('/og.svg', Astro.site ?? site.siteUrl).href,
+  jsonLd,
+} = Astro.props as Props;
+
+const pageTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonical} />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{pageTitle}</title>
+    {
+      jsonLd && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd)}
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="page-shell">
+      <slot name="header" />
+      <main id="content">
+        <slot />
+      </main>
+      <footer class="footer">
+        <p>
+          {site.name} · Public-safe bootstrap built from approved source content only.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

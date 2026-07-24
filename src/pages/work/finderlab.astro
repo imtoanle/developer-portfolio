@@ -1,0 +1,67 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { site } from '../../lib/site';
+
+const [finderlab] = await getCollection('work', ({ id }) => id === 'finderlab');
+
+if (!finderlab) {
+  throw new Error('FinderLab content is missing from the work collection.');
+}
+
+const { Content } = await render(finderlab);
+const canonical = new URL('/work/finderlab', Astro.site ?? site.siteUrl).href;
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: finderlab.data.title,
+  description: finderlab.data.summary,
+  author: {
+    '@type': 'Person',
+    name: site.name,
+  },
+  mainEntityOfPage: canonical,
+};
+---
+
+<BaseLayout
+  title="FinderLab Case Study"
+  description={finderlab.data.summary}
+  canonical={canonical}
+  jsonLd={articleSchema}
+>
+  <SiteHeader slot="header" />
+
+  <article
+    class="section work-detail article"
+    aria-labelledby="finderlab-title"
+  >
+    <SectionHeading
+      label={finderlab.data.label}
+      title={finderlab.data.title}
+      eyebrow={finderlab.data.summary}
+      id="finderlab-title"
+    />
+    <div class="work-props">
+      <div class="work-prop">
+        <dt>Problem</dt>
+        <dd>{finderlab.data.problem}</dd>
+      </div>
+      <div class="work-prop">
+        <dt>Role</dt>
+        <dd>{finderlab.data.role}</dd>
+      </div>
+      <div class="work-prop">
+        <dt>Outcome</dt>
+        <dd>{finderlab.data.outcome}</dd>
+      </div>
+      <div class="work-prop">
+        <dt>Selected decisions</dt>
+        <dd>{finderlab.data.decisions.join(' · ')}</dd>
+      </div>
+    </div>
+    <Content />
+  </article>
+</BaseLayout>

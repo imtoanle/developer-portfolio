@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Timeline from '../components/Timeline.astro';
+import { site } from '../lib/site';
+import { cvHighlights, experience } from '../lib/site-content';
+
+const canonical = new URL('/cv', Astro.site ?? site.siteUrl).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: 'Senior Product Engineer',
+  url: canonical,
+  sameAs: [site.github],
+};
+---
+
+<BaseLayout
+  title="Public CV"
+  description="Public-safe CV summary based only on the approved source pack."
+  canonical={canonical}
+  jsonLd={schema}
+>
+  <SiteHeader slot="header" />
+
+  <section class="section article">
+    <SectionHeading
+      label="//SECTION_CV"
+      title="Public CV"
+      eyebrow="The approved source pack does not include a downloadable public CV file, so the page stays source-backed and concise."
+      id="cv-title"
+    />
+    <div class="grid" data-columns="2">
+      {
+        cvHighlights.map((item) => (
+          <article class="panel">
+            <p>{item}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <h2>Experience Timeline</h2>
+    <Timeline entries={[...experience]} />
+
+    <div class="panel">
+      <p class="kicker">Download / view</p>
+      <p>
+        No public PDF or download asset is included in the approved source pack
+        yet. When an approved file exists, this section can link to it directly.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
