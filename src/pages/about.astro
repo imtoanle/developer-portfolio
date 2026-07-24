@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { site } from '../lib/site';
+import { currentStatus } from '../lib/site-content';
+
+const canonical = new URL('/about', Astro.site ?? site.siteUrl).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: 'Senior Product Engineer',
+  url: canonical,
+  sameAs: [site.github],
+};
+---
+
+<BaseLayout
+  title="About"
+  description="A concise public about page focused on product engineering, architecture, and production systems."
+  canonical={canonical}
+  jsonLd={schema}
+>
+  <SiteHeader slot="header" />
+
+  <section class="section article">
+    <SectionHeading
+      label="//SECTION_00"
+      title="About"
+      eyebrow="Public-safe summary only."
+      id="about-title"
+    />
+    <p>
+      I build production systems that need strong architecture, clean data
+      models, reliable search, and practical operations. The public story is
+      centered on senior product engineering, technical leadership, and the
+      kinds of systems that have to work after launch.
+    </p>
+    <p>
+      The strongest pattern across the approved source set is ownership: solo
+      product work at FinderLab, architecture and database responsibility at
+      JobReady, technical delivery at FPT Blockchain Lab, and support automation
+      at Aitbase Omnichannel.
+    </p>
+    <div class="grid" data-columns="2">
+      {
+        currentStatus.map((item) => (
+          <article class="panel">
+            <p class="kicker">{item.label}</p>
+            <p>{item.value}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

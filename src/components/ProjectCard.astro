@@ -1,0 +1,57 @@
+---
+type Props = {
+  label: string;
+  title: string;
+  summary: string;
+  problem: string;
+  role: string;
+  approach: string[];
+  decisions: string[];
+  outcome: string;
+  status: string;
+  href?: string;
+  linkLabel?: string;
+};
+
+const { href, linkLabel = '[OPEN_DETAIL]', ...project } = Astro.props as Props;
+---
+
+<article class="panel">
+  <p class="kicker">{project.label}</p>
+  <h3>{project.title}</h3>
+  <p>{project.summary}</p>
+  <dl class="work-props">
+    <div class="work-prop">
+      <dt>Problem</dt>
+      <dd>{project.problem}</dd>
+    </div>
+    <div class="work-prop">
+      <dt>Role</dt>
+      <dd>{project.role}</dd>
+    </div>
+    <div class="work-prop">
+      <dt>Approach</dt>
+      <dd>{project.approach.join(' · ')}</dd>
+    </div>
+    <div class="work-prop">
+      <dt>Decisions</dt>
+      <dd>{project.decisions.join(' · ')}</dd>
+    </div>
+    <div class="work-prop">
+      <dt>Outcome / Status</dt>
+      <dd>
+        {project.outcome}
+        {project.status ? `(${project.status})` : ''}
+      </dd>
+    </div>
+  </dl>
+  {
+    href ? (
+      <p>
+        <a class="button secondary" href={href}>
+          {linkLabel}
+        </a>
+      </p>
+    ) : null
+  }
+</article>

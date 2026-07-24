@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { site } from '../../lib/site';
+
+const workEntries = await getCollection('work');
+const primaryWork = workEntries
+  .filter((entry) => entry.data.category === 'primary')
+  .sort((left, right) => left.data.priority - right.data.priority);
+const secondaryWork = workEntries
+  .filter((entry) => entry.data.category === 'secondary')
+  .sort((left, right) => left.data.priority - right.data.priority);
+
+const canonical = new URL('/work', Astro.site ?? site.siteUrl).href;
+---
+
+<BaseLayout
+  title="Work"
+  description="Scannable index of FinderLab, AI Document Operations, Aitbase Camera, and supporting approved projects."
+  canonical={canonical}
+>
+  <SiteHeader slot="header" />
+
+  <section class="section" aria-labelledby="work-index-title">
+    <SectionHeading
+      label="//SECTION_04"
+      title="Work Index"
+      eyebrow="Primary case studies first, then supporting projects."
+      id="work-index-title"
+    />
+    <div class="primary-work">
+      {
+        primaryWork.map((entry) => (
+          <ProjectCard
+            label={entry.data.label}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            problem={entry.data.problem}
+            role={entry.data.role}
+            approach={entry.data.approach}
+            decisions={entry.data.decisions}
+            outcome={entry.data.outcome}
+            status={entry.data.status}
+            href={entry.id === 'finderlab' ? '/work/finderlab' : undefined}
+            linkLabel={
+              entry.id === 'finderlab' ? '[READ_CASE_STUDY]' : '[STATUS_ONLY]'
+            }
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section
+    class="section"
+    aria-labelledby="secondary-work-title"
+    data-tone="alt"
+  >
+    <SectionHeading
+      label="//SECTION_04B"
+      title="Supporting Projects"
+      eyebrow="Secondary approved work, kept compact for scanning."
+      id="secondary-work-title"
+    />
+    <div class="grid" data-columns="2">
+      {
+        secondaryWork.map((entry) => (
+          <article class="panel">
+            <p class="kicker">{entry.data.label}</p>
+            <h3>{entry.data.title}</h3>
+            <p>{entry.data.summary}</p>
+            <p class="muted">{entry.data.status}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

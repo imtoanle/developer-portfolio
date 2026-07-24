@@ -1,0 +1,28 @@
+---
+type Entry = {
+  period: string;
+  role: string;
+  company: string;
+  detail: string;
+};
+
+type Props = {
+  entries: Entry[];
+};
+
+const { entries } = Astro.props as Props;
+---
+
+<div class="timeline">
+  {
+    entries.map((entry) => (
+      <article class="timeline-item">
+        <span>{entry.period}</span>
+        <strong>
+          {entry.role} · {entry.company}
+        </strong>
+        <p>{entry.detail}</p>
+      </article>
+    ))
+  }
+</div>

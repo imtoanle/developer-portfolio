@@ -1,0 +1,18 @@
+---
+type Props = {
+  items: { label: string; value: string }[];
+};
+
+const { items } = Astro.props as Props;
+---
+
+<div class="grid" data-columns="3">
+  {
+    items.map((item) => (
+      <article class="panel">
+        <p class="kicker">{item.label}</p>
+        <p>{item.value}</p>
+      </article>
+    ))
+  }
+</div>

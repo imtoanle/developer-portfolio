@@ -1,0 +1,25 @@
+---
+type Proof = {
+  label: string;
+  value: string;
+  scope: string;
+};
+
+type Props = {
+  proofs: Proof[];
+};
+
+const { proofs } = Astro.props as Props;
+---
+
+<div class="grid" data-columns="4">
+  {
+    proofs.map((proof) => (
+      <article class="panel">
+        <p class="kicker">{proof.label}</p>
+        <h3>{proof.value}</h3>
+        <p class="muted">{proof.scope}</p>
+      </article>
+    ))
+  }
+</div>

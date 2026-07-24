@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { site } from '../../lib/site';
+
+const notes = await getCollection('notes');
+const canonical = new URL('/notes', Astro.site ?? site.siteUrl).href;
+---
+
+<BaseLayout
+  title="Notes"
+  description="Public engineering notes and short essays, if any have been approved for publication."
+  canonical={canonical}
+>
+  <SiteHeader slot="header" />
+
+  <section class="section" aria-labelledby="notes-index-title">
+    <SectionHeading
+      label="//SECTION_06"
+      title="Notes"
+      eyebrow="The collection is ready; the empty state is intentional when no notes are approved."
+      id="notes-index-title"
+    />
+    {
+      notes.length > 0 ? (
+        <div class="grid" data-columns="2">
+          {notes.map((note) => (
+            <article class="panel">
+              <p class="kicker">
+                {note.data.topic} · {note.data.readingTime} min
+              </p>
+              <h3>
+                <a href={`/notes/${note.id}`}>{note.data.title}</a>
+              </h3>
+              <p>{note.data.summary}</p>
+              <p class="muted">{note.data.date.toISOString().slice(0, 10)}</p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="note-empty">
+          <p class="kicker">No public notes yet</p>
+          <p>
+            The Notes collection is implemented for future entries, but the
+            approved source pack does not include a publishable article yet.
+          </p>
+          <p>
+            <a class="button secondary" href="/notes/no-public-notes">
+              View the notes shell
+            </a>
+          </p>
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

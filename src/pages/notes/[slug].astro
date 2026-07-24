@@ -1,0 +1,93 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { site } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  if (notes.length === 0) {
+    return [
+      {
+        params: { slug: 'no-public-notes' },
+        props: { note: null },
+      },
+    ];
+  }
+
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props as {
+  note: CollectionEntry<'notes'> | null;
+};
+
+const canonical = new URL(
+  `/notes/${note?.id ?? 'no-public-notes'}`,
+  Astro.site ?? site.siteUrl,
+).href;
+const articleSchema = note
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: note.data.title,
+      description: note.data.summary,
+      datePublished: note.data.date.toISOString(),
+      author: {
+        '@type': 'Person',
+        name: site.name,
+      },
+      mainEntityOfPage: canonical,
+    }
+  : undefined;
+
+const rendered = note ? await render(note) : null;
+---
+
+<BaseLayout
+  title={note?.data.title ?? 'No Public Notes'}
+  description={note?.data.summary ?? 'No public notes have been approved yet.'}
+  canonical={canonical}
+  jsonLd={articleSchema}
+>
+  <SiteHeader slot="header" />
+  <article class="section article">
+    <SectionHeading
+      label={note ? `//NOTE_${note.id.toUpperCase()}` : '//NOTE_INDEX'}
+      title={note?.data.title ?? 'No Public Notes'}
+      eyebrow={note?.data.summary ??
+        'The Notes collection is present, but no public article has been approved yet.'}
+      id="note-title"
+    />
+    {
+      note && rendered ? (
+        <>
+          <p class="kicker">
+            {note.data.topic} · {note.data.readingTime} min ·
+            {note.data.date.toISOString().slice(0, 10)}
+          </p>
+          <rendered.Content />
+        </>
+      ) : (
+        <div class="note-empty">
+          <p class="kicker">Empty state</p>
+          <p>
+            No public note was approved in the source pack. This route exists so
+            the notes section still has a built placeholder without inventing an
+            article.
+          </p>
+          <p>
+            <a class="button secondary" href="/notes">
+              Back to Notes
+            </a>
+          </p>
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>
